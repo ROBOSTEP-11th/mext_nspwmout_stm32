@@ -10,8 +10,8 @@ namespace mext_pwm {
 class NsPwmOut {
 public:
 	NsPwmOut(PinName p) {
-		mhal::nspwmout_init(&pwm, p);
-		cycles_per_sec_ = mhal::nspwmout_get_tim_clk(&pwm);
+		mhal_pwm::nspwmout_init(&pwm, p);
+		cycles_per_sec_ = mhal_pwm::nspwmout_get_tim_clk(&pwm);
 	}
 
 	void period(float seconds) {
@@ -35,7 +35,7 @@ public:
 
 		CriticalSectionLock lock;
 		float duty = read();
-		mhal::nspwmout_set_cycles(&pwm, period_cycles, (uint32_t)(period_cycles * duty));
+		mhal_pwm::nspwmout_set_cycles(&pwm, period_cycles, (uint32_t)(period_cycles * duty));
 	}
 
 	void pulsewidth(float seconds) {
@@ -59,12 +59,12 @@ public:
 
 		CriticalSectionLock lock;
 
-		const uint32_t period_cycles = mhal::nspwmout_period_cycles(&pwm);
+		const uint32_t period_cycles = mhal_pwm::nspwmout_period_cycles(&pwm);
 		if (pulse_cycles > period_cycles) {
 			pulse_cycles = period_cycles;
 		}
 
-		mhal::nspwmout_set_pulse_cycles(&pwm, pulse_cycles);
+		mhal_pwm::nspwmout_set_pulse_cycles(&pwm, pulse_cycles);
 	}
 
 	int read_pulsewidth_us() {
@@ -73,7 +73,7 @@ public:
 
 	int read_pulsewidth_ns() {
 		CriticalSectionLock lock;
-		return cycles_to_ns(mhal::nspwmout_pulse_cycles(&pwm));
+		return cycles_to_ns(mhal_pwm::nspwmout_pulse_cycles(&pwm));
 	}
 
 	int read_period_us() {
@@ -82,7 +82,7 @@ public:
 
 	int read_period_ns() {
 		CriticalSectionLock lock;
-		return cycles_to_ns(mhal::nspwmout_period_cycles(&pwm));
+		return cycles_to_ns(mhal_pwm::nspwmout_period_cycles(&pwm));
 	}
 
 	void write(float duty) {
@@ -95,13 +95,13 @@ public:
 
 		CriticalSectionLock lock;
 
-		const uint32_t pulse_cycles = (uint32_t)(mhal::nspwmout_period_cycles(&pwm) * duty);
-		mhal::nspwmout_set_pulse_cycles(&pwm, pulse_cycles);
+		const uint32_t pulse_cycles = (uint32_t)(mhal_pwm::nspwmout_period_cycles(&pwm) * duty);
+		mhal_pwm::nspwmout_set_pulse_cycles(&pwm, pulse_cycles);
 	}
 
 	float read() {
 		CriticalSectionLock lock;
-		return (float)mhal::nspwmout_pulse_cycles(&pwm) / mhal::nspwmout_period_cycles(&pwm);
+		return (float)mhal_pwm::nspwmout_pulse_cycles(&pwm) / mhal_pwm::nspwmout_period_cycles(&pwm);
 	}
 
 	NsPwmOut &operator=(float value) {
@@ -124,7 +124,7 @@ public:
 
 	~NsPwmOut() {
 		CriticalSectionLock lock; // lock as mbed API can possibly alter global environment
-		mhal::nspwmout_free(&pwm);
+		mhal_pwm::nspwmout_free(&pwm);
 	}
 
 private:
@@ -147,7 +147,7 @@ private:
 
 	DeepSleepLock lock;
 
-	mhal::nspwmout_t pwm;
+	mhal_pwm::nspwmout_t pwm;
 	uint32_t cycles_per_sec_;
 };
 
