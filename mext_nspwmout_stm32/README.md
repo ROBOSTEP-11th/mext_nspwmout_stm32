@@ -12,7 +12,7 @@ PwmOutとほとんど同じインターフェースです
 #include "mbed.h"
 #include "NsPwmOut.h"
 
-using mext_pwm::NsPwmOut;
+using mext::NsPwmOut;
 
 NsPwmOut led1(LED1);
 

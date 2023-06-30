@@ -14,7 +14,7 @@
  *
 */
 
-namespace mhal_pwm {
+namespace mhal {
 
 struct nspwmout_t {
 	PWMName pwm;
